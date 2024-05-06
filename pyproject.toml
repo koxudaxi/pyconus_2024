@@ -1,0 +1,47 @@
+[project]
+name = "pyconus_2024_talk"
+version = "0.0.0"
+dependencies = [
+    "httpx",
+    "requests",
+    "ruff",
+    "pyright"
+]
+requires-python = ">=3.12"
+authors = [
+    { name = "Koudai Aono", email = "koxudaxi@gmail.com" },
+]
+maintainers = [
+    { name = "Koudai Aono", email = "koxudaxi@gmail.com" },
+]
+description = "Code for PyConUS 2024 talk"
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = []
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.12",
+]
+
+
+[tool.ruff]
+line-length = 88
+target-version = 'py312'
+
+[tool.ruff.lint]
+extend-select = ['Q', 'RUF100', 'C4', 'UP', 'I']
+flake8-quotes = { inline-quotes = 'single', multiline-quotes = 'double' }
+ignore = ['E501', 'UP006', 'UP007', 'Q000', 'Q003', 'N999', 'S113', 'S101', 'PLR2004', 'E402', 'TID252', 'T201', 'ARG002', 'TCH003', 'UP040']
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[tool.hatch.build]
+packages = ["src"]
