@@ -13,15 +13,14 @@ class ResponseLike(Protocol):
     status_code: int
 
 
-def add_logging[**P](
-    description: str, *, level: int = 0
-) -> Callable[
-    [Callable[Concatenate[RemoteLogger, P], ResponseLike]], Callable[P, ResponseLike]
-]:
-    def inner(
-        func: Callable[Concatenate[RemoteLogger, P], ResponseLike],
-    ) -> Callable[P, ResponseLike]:
-        logger = RemoteLogger(func.__name__, description, level)
+type LogFunc[** P, R] = Callable[Concatenate[RemoteLogger, P], R]
+
+
+def add_logging[** P](
+        group: str, *, level: int = 0
+) -> Callable[[LogFunc[P, ResponseLike]], Callable[P, ResponseLike]]:
+    def inner(func: LogFunc[P, ResponseLike]) -> Callable[P, ResponseLike]:
+        logger = RemoteLogger(func.__name__, group, level)
 
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> ResponseLike:
             logger.send_log(args=args, kwargs=kwargs)
@@ -35,20 +34,20 @@ def add_logging[**P](
 
 
 @add_logging('http client', level=0)
-def call_url_with_requests(
-    logger: RemoteLogger, url: str, timeout: float = 5
+def download_with_request(
+        logger: RemoteLogger, url: str, timeout: float = 5
 ) -> ResponseLike:
-    logger.send_log(message='in call_url')
+    logger.send_log(message='in download_with_request')
     return requests.get(url, timeout=timeout)
 
 
 @add_logging('http client', level=0)
-def call_url_with_httpx(
-    logger: RemoteLogger, url: str, timeout: float = 5
+def download_with_httpx(
+        logger: RemoteLogger, url: str, timeout: float = 5
 ) -> ResponseLike:
-    logger.send_log(message='in call_url')
+    logger.send_log(message='in download_with_httpx')
     return httpx.get(url, timeout=timeout)
 
 
-call_url_with_requests('https://examples.com/', timeout=10)
-call_url_with_httpx('https://examples.com/', timeout=10)
+x = download_with_request('https://examples.com/', timeout=10)
+download_with_httpx('https://examples.com/', timeout=10)

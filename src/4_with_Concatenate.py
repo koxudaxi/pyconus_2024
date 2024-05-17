@@ -12,14 +12,14 @@ class ResponseLike(Protocol):
 
 
 def add_logging(
-    description: str, *, level: int = 0
+    group: str, *, level: int = 0
 ) -> Callable[
     [Callable[Concatenate[RemoteLogger, P], ResponseLike]], Callable[P, ResponseLike]
 ]:
     def inner(
         func: Callable[Concatenate[RemoteLogger, P], ResponseLike],
     ) -> Callable[P, ResponseLike]:
-        logger = RemoteLogger(func.__name__, description, level)
+        logger = RemoteLogger(func.__name__, group, level)
 
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> ResponseLike:
             logger.send_log(args=args, kwargs=kwargs)

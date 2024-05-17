@@ -1,18 +1,24 @@
-from collections.abc import Callable
-from typing import Concatenate, ParamSpec, TypeVar
 
-P = ParamSpec("P")
-R = TypeVar("R")
+from typing import TypeAlias
 
-def with_request(f: Callable[Concatenate[Request, P], R]) -> Callable[P, R]:
-  def inner(*args: P.args, **kwargs: P.kwargs) -> R:
-    return f(Request(), *args, **kwargs)
-  return inner
+Url: TypeAlias = str
 
-@with_request
-def takes_int_str(request: Request, x: int, y: str) -> int:
-  # use request
-  return x + 7
+def get_status(url: Url) -> int:
+    ...
 
-takes_int_str(1, "A") # Accepted
-takes_int_str("B", 2) # Correctly rejected by the type checker
+
+type Url = str
+
+def get_status(url: Url) -> int:
+    ...
+
+
+from typing import TypeVar
+
+T = TypeVar('T')
+def multiply(x: T, y: int) -> T:
+    ...
+
+def multiply[T](x: T, y: int) -> T:
+    ...
+

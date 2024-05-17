@@ -4,9 +4,9 @@ import requests
 from remote_logger import RemoteLogger
 
 
-def add_logging(description, level=0):
+def add_logging(group, level=0):
     def inner(func):
-        logger = RemoteLogger(func.__name__, description, level)
+        logger = RemoteLogger(func.__name__, group, level)
 
         def wrapper(*args, **kwargs):
             logger.send_log(args=args, kwargs=kwargs)
@@ -25,5 +25,5 @@ def call_url(url: str) -> Any:
 
 
 call_url('https://www.example.com/')
-# {"name": "call_url", "description": "http client", "level": 0, "args": ["https://www.example.com/"], "kwargs": {}}
-# {"name": "call_url", "description": "http client", "level": 0, "result": 200}
+# {"name": "call_url", "group": "http client", "level": 0, "args": ["https://www.example.com/"], "kwargs": {}}
+# {"name": "call_url", "group": "http client", "level": 0, "result": 200}

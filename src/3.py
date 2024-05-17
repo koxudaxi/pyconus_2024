@@ -1,20 +1,18 @@
-from typing import Protocol
+from collections.abc import Awaitable, Callable
+from typing import ParamSpec, TypeVar
 
+P = ParamSpec("P")
+R = TypeVar("R")
 
-class ResponseLike(Protocol):
-    status_code: int
+def add_logging(f: Callable[P, R]) -> Callable[P, Awaitable[R]]:
+  async def inner(*args: P.args, **kwargs: P.kwargs) -> R:
+    await log_to_database()
+    return f(*args, **kwargs)
+  return inner
 
-    def json(self) -> dict:
-        ...
+@add_logging
+def takes_int_str(x: int, y: str) -> int:
+  return x + 7
 
-# > response: ResponseLike = requests.get('https://example.com')
-# > response.json()
-# > response.status_code
-
-class ClientGetFunction(Protocol):
-    def __call__(self, url: str, timeout: float) -> ResponseLike:
-        ...
-
-# > def call_url(url: str, timeout: float) -> ResponseLike:
-# >     return requests.get(url, timeout=timeout)
-# > func: ClientGetFunction = call_url # OK
+await takes_int_str(1, "A") # Accepted
+await takes_int_str("B", 2) # Correctly rejected by the type checker

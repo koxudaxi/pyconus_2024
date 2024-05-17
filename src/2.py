@@ -1,12 +1,20 @@
-from typing import TypeVar, TypeVarTuple
-
-T = TypeVar("T")
-Ts = TypeVarTuple("Ts")
+from typing import Protocol
 
 
-def move_first_element_to_last(tup: tuple[T, *Ts]) -> tuple[*Ts, T]:
-    return (*tup[1:], tup[0])
+class ResponseLike(Protocol):
+    status_code: int
 
-move_first_element_to_last((1, 2, 3)) # Expected: (2, 3, 1)
-#                           ↑  ↑  ↑
-#                           T  *Ts
+    def json(self) -> dict:
+        ...
+
+# > response: ResponseLike = requests.get('https://example.com')
+# > response.json()
+# > response.status_code
+
+class ClientGetFunction(Protocol):
+    def __call__(self, url: str, timeout: float) -> ResponseLike:
+        ...
+
+# > def call_url(url: str, timeout: float) -> ResponseLike:
+# >     return requests.get(url, timeout=timeout)
+# > func: ClientGetFunction = call_url # OK

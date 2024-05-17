@@ -8,10 +8,10 @@ Ts = TypeVarTuple('Ts')
 
 
 def add_logging(
-    description: str, *, level: int = 0
+    group: str, *, level: int = 0
 ) -> Callable[[Callable[[*Ts], Any]], Callable[[*Ts], Any]]:
     def inner(func: Callable[[*Ts], Any]) -> Callable[[*Ts], Any]:
-        logger = RemoteLogger(func.__name__, description, level)
+        logger = RemoteLogger(func.__name__, group, level)
 
         def wrapper(*args: *Ts, **kwargs: Any) -> Any:
             logger.send_log(args=args, kwargs=kwargs)
